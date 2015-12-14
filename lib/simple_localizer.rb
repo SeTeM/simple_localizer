@@ -6,7 +6,7 @@ module SimpleLocalizer
   @@supported_locales = %w(
     aa ab ae af al am ar as ay az
     ba be bg bh bi bn bo bp br ca
-    cf ch co cs cy de dr dt dz ef
+    cf ch co cs cy da de dr dt dz ef
     eg ej el en eo ep er es et eu
     fa fi fj fo fr fy ga gd gl gn
     gu ha he hi hm hr hu hy ia ie
