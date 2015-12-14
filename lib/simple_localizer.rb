@@ -19,8 +19,8 @@ module SimpleLocalizer
     sk sl sm sn so sq sr ss st su
     sv sw ta te tg th ti tj tk tl
     tn to tp tr ts tt tw uk ul ur
-    uz vi vo wo xh yo zh zu zh-CN
-    zh-TW id
+    uz vi vo wo xh yo zh zu zh_cn
+    zh_tw id
   )
 
   module ClassMethods
@@ -57,16 +57,16 @@ module SimpleLocalizer
           locale = SimpleLocalizer.read_locale
           translation = send("#{attr}_#{locale.underscore}")
 
-          translation && translation.presence || send("fallback_#{attr}_for", locale)
+          translation && translation.presence || send("fallback_#{attr}_for", locale.underscore)
         end
 
         define_method "fallback_#{attr}_for" do |locale|
           return unless I18n.respond_to?(:fallbacks)
 
-          fallbacks_locales = (I18n.fallbacks[locale].dup.map(&:to_s) + SimpleLocalizer.supported_locales.dup).uniq
+          fallbacks_locales = (I18n.fallbacks[locale].dup.map { |t| t.to_s.underscore } + SimpleLocalizer.supported_locales.dup).uniq
 
           sorted_translations = translations.to_a.sort_by do |t|
-            fallbacks_locales.index(t.locale) || -Float::INFINITY
+            fallbacks_locales.index(t.locale.underscore) || -Float::INFINITY
           end
 
           sorted_translations.each do |t|
@@ -82,7 +82,7 @@ module SimpleLocalizer
         SimpleLocalizer.supported_locales.each do |locale|
           define_method "#{attr}_#{locale.underscore}" do
             translation = translations.detect { |translation|
-              translation.locale == locale
+              translation.locale.underscore == locale
             }
 
             translation.try(attr)
@@ -90,7 +90,7 @@ module SimpleLocalizer
 
           define_method "#{attr}_#{locale.underscore}=" do |value|
             translation = translations.detect { |translation|
-              translation.locale == locale
+              translation.locale.underscore == locale
             }
             translation ||= translations.build :locale => locale
             translation.send("#{attr}=", value)
@@ -130,8 +130,8 @@ module SimpleLocalizer
   module_function
 
   def set_locale(locale)
-    return if !locale.presence || !supported_locales.include?(locale.to_s)
-    Thread.current[:simple_localizer_locale] = locale.to_s
+    return if !locale.presence || !supported_locales.include?(locale.to_s.underscore)
+    Thread.current[:simple_localizer_locale] = locale.to_s.underscore
   end
 
 end

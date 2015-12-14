@@ -89,14 +89,26 @@ describe SimpleLocalizer do
     end
   end
 
-  it "локаль с дефисом" do
-    product = nil
-    SimpleLocalizer.with_locale(:'zh-CN') do
-      product = Product.create!(
-        :name => 'asd'
-      )
+  context "локаль с дефисом" do
+    it "именно дефис" do
+      product = nil
+      SimpleLocalizer.with_locale(:'zh-CN') do
+        product = Product.create!(
+          :name => 'asd'
+        )
+      end
+      product.name_zh_cn.should == 'asd'
     end
-    product.name_zh_cn.should == 'asd'
+
+    it "подчеркивание вместо дефиса" do
+      product = nil
+      SimpleLocalizer.with_locale(:'zh_cn') do
+        product = Product.create!(
+          :name => 'asd'
+        )
+      end
+      product.name_zh_cn.should == 'asd'
+    end
   end
 end
 
